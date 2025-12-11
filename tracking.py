@@ -6,7 +6,7 @@ from collections import deque
 import pyttsx3
 from tensorflow.keras.applications.efficientnet import preprocess_input
 
-model = tf.keras.models.load_model("static/models/EfficientNet/asl_best_model.h5")
+model = tf.keras.models.load_model("static/models/EfficientNet/asl_best_model(1).h5")
 
 CLASS_NAMES = [
     'A','B','C','D','E','F','G','H','I','J','K','L','M','N',

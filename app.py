@@ -1,16 +1,16 @@
 from flask import Flask, request, jsonify, render_template
 import cv2
 import numpy as np
-import mediapipe as mp
 import tensorflow as tf
 from tensorflow.keras.applications import efficientnet, resnet
 
+    
 # Load model
 MODEL_PATHS = {
-    "efficientnet": "static/models/EfficientNet/asl_best_model.h5",
-    "cnn": "static/models/CNN/asl_best_model(1).h5",
+    "efficientnet": "static/models/EfficientNet/asl_best_model(1).h5",
+    "cnn": "static/models/CNN/asl_model_cnn.keras",
     "resnet": "static/models/ResNet34/asl_resnet_best_model.h5",
-    "convnext": "static/models/ConvNeXt-Tiny/best_asl_convnext_model.h5",
+    # "convnext": "static/models/ConvNeXt-Tiny/best_asl_convnext_model.h5"
 }
 
 PREPROCESS = {
@@ -66,7 +66,7 @@ def predict():
     img = cv2.imdecode(arr, cv2.IMREAD_COLOR)
     if img is None:
         return jsonify({"prediction": "None", "confidence": 0})
-
+    
     # Convert to RGB
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img = cv2.resize(img, (size, size))

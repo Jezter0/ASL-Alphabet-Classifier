@@ -1,0 +1,79 @@
+/* Background */
+body {
+    background: linear-gradient(145deg, #d9d9d9, #bfbfbf);
+    backdrop-filter: blur(5px);
+}
+
+/* Glass card */
+.glass-card {
+    background: rgba(255, 255, 255, 0.22);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+.rounded-cam {
+    border-radius: 15px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+.btn-glass {
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    color: #000;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2);
+    transition: 0.2s;
+}
+.btn-glass:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+#prediction {
+    font-size: 4rem;
+    letter-spacing: 2px;
+}
+
+/* Fade-in animation */
+.fade-in {
+    animation: fade 0.8s ease;
+}
+@keyframes fade {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+nav.navbar {
+    background: rgba(255, 255, 255, 0.20);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 0.8rem 1.5rem;
+}
+
+nav .navbar-brand {
+    color: #222 !important;
+    font-size: 1.4rem;
+    letter-spacing: 0.5px;
+}
+
+/* ----------- Glass Footer ----------- */
+footer {
+    text-align: center;
+    margin-top: 60px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
+    color: #333;
+    font-weight: 500;
+}
+
+/* Center container spacing */
+.container {
+    margin-top: 40px;
+}
