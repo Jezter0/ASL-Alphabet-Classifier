@@ -106,14 +106,13 @@ function processROI(landmarks) {
     let ymin = Math.min(...ys);
     let ymax = Math.max(...ys);
 
-    const padX = (xmax - xmin) * 0.25;
-    const padY = (ymax - ymin) * 0.35;
-
-    xmin = Math.max(0, xmin - padX);
-    ymin = Math.max(0, ymin - padY);
-    xmax = Math.min(vidW, xmax + padX);
-    ymax = Math.min(vidH, ymax + padY);
-
+    const hand_w = xmax - xmin;
+    const hand_h = ymax - ymin;
+    const scale = 1.5;
+    xmin = Math.max(0, xmin - hand_w * (scale - 1) / 2);
+    xmax = Math.min(vidW, xmax + hand_w * (scale - 1) / 2);
+    ymin = Math.max(0, ymin - hand_h * (scale - 1) / 2);
+    ymax = Math.min(vidH, ymax + hand_h * (scale - 1) / 2);
     drawBBox(xmin, ymin, xmax, ymax);
     cropAndSend(xmin, ymin, xmax, ymax);
 }
