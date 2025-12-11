@@ -32,20 +32,7 @@ Thumbs.db
 logs/
 *.log
 
-# Models, weights and large binaries
-*.h5
-*.hdf5
-*.ckpt
-*.pb
-*.tflite
-*.onnx
-*.pt
-*.pth
-*.weights
-
 # Model and trained-data directories (relative to AOL/)
-models/
-static/models/
 Data/
 data/
 images/
