@@ -1,0 +1,73 @@
+# Python cache / bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter
+.ipynb_checkpoints
+*.ipynb_checkpoints
+
+# Virtualenv / environment
+.env
+.venv/
+venv/
+env/
+ENV/
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+Pipfile.lock
+
+# IDE/editor
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs and runtime files
+logs/
+*.log
+
+# Models, weights and large binaries
+*.h5
+*.hdf5
+*.ckpt
+*.pb
+*.tflite
+*.onnx
+*.pt
+*.pth
+*.weights
+
+# Model and trained-data directories (relative to AOL/)
+models/
+static/models/
+Data/
+data/
+images/
+
+# Package/build artifacts
+dist/
+build/
+*.egg-info/
+
+# Serialized data / caches
+*.pkl
+*.pickle
+*.npz
+*.npy
+
+# Archives / large bundles
+*.zip
+*.tar.gz
+*.tgz
+
+# Docker
+docker-compose.override.yml
+
+# Misc
+*.local
