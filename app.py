@@ -9,12 +9,20 @@ from tensorflow.keras.applications import efficientnet, resnet
     
 # Load model
 MODEL_SOURCES = {
+    # "efficientnet": {
+    #     "path": "static/models/EfficientNet/model.h5",
+    #     "drive_id": "1u5N396JC-vw-aSpAVHn8EF212SO3aZWv"
+    # },
+    # "resnet": {
+    #     "path": "static/models/ResNet/model.h5",
+    #     "drive_id": "1UYrHIHUaR77ku7WphQRD9saPMirqpVhB"
+    # },
     "efficientnet": {
-        "path": "static/models/EfficientNet/model.h5",
+        "path": "/tmp/models/EfficientNet/model.h5",
         "drive_id": "1u5N396JC-vw-aSpAVHn8EF212SO3aZWv"
     },
     "resnet": {
-        "path": "static/models/ResNet/model.h5",
+        "path": "/tmp/models/ResNet/model.h5",
         "drive_id": "1UYrHIHUaR77ku7WphQRD9saPMirqpVhB"
     },
     "cnn": {
@@ -45,8 +53,6 @@ def is_lfs_pointer(path):
         return True
 
 def download_from_drive(file_id, output_path):
-    gdown_cache = "/tmp/gdown"
-    os.makedirs(gdown_cache, exist_ok=True)
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
     url = f"https://drive.google.com/uc?id={file_id}"
@@ -153,10 +159,10 @@ def predict():
     })
 
 
-with app.app_context():
-    print("[INFO] Warming up models...")
-    for name in MODEL_SOURCES:
-        get_model(name)
+# with app.app_context():
+#     print("[INFO] Warming up models...")
+#     for name in MODEL_SOURCES:
+#         get_model(name)
 
         
 if __name__ == "__main__":
