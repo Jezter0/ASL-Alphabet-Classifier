@@ -138,8 +138,14 @@ function cropAndSend(xmin, ymin, xmax, ymax) {
 }
 
 // -------------------------
+let lastPredict = 0;
+const PREDICT_INTERVAL = 200;
 function prepareForPrediction(cropCanvas) {
+    const now = performance.now();
+    if (now - lastPredict < PREDICT_INTERVAL) return;
+    lastPredict = now;
     const TARGET = 224;
+    const modelSelect = document.getElementById("model");
 
     const resizedCanvas = document.createElement("canvas");
     resizedCanvas.width = TARGET;
@@ -151,6 +157,7 @@ function prepareForPrediction(cropCanvas) {
     resizedCanvas.toBlob(blob => {
         const fd = new FormData();
         fd.append("frame", blob, "frame.jpg");
+        fd.append("model", modelSelect.value);
 
         fetch("/predict", {
             method: "POST",

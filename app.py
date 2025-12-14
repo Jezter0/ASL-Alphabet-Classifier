@@ -131,6 +131,9 @@ def predict():
     preprocess = PREPROCESS[model_name]
     size = INPUT_SIZE[model_name]
 
+    dummy = np.zeros((1, 224, 224, 3), dtype=np.float32)
+    model.predict(dummy, verbose=0)
+
     if not file:
         return jsonify({"prediction": "No Hands", "confidence": 0})
 
