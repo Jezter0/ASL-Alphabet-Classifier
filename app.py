@@ -1,16 +1,26 @@
 from flask import Flask, request, jsonify, render_template
+import os
 import cv2
+import gdown
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.applications import efficientnet, resnet
 
     
 # Load model
-MODEL_PATHS = {
-    "efficientnet": "static/models/EfficientNet/asl_best_model(1).h5",
-    "cnn": "static/models/CNN/asl_model_cnn.keras",
-    "resnet": "static/models/ResNet34/asl_resnet_best_model.h5",
-    # "convnext": "static/models/ConvNeXt-Tiny/best_asl_convnext_model.h5"
+MODEL_SOURCES = {
+    "efficientnet": {
+        "path": "static/models/EfficientNet/model.h5",
+        "drive_id": "1u5N396JC-vw-aSpAVHn8EF212SO3aZWv"
+    },
+    "resnet": {
+        "path": "static/models/ResNet/model.h5",
+        "drive_id": "1UYrHIHUaR77ku7WphQRD9saPMirqpVhB"
+    },
+    "cnn": {
+        "path": "static/models/CNN/asl_model_cnn.keras",
+        "drive_id": None  # already local
+    }
 }
 
 PREPROCESS = {
@@ -27,14 +37,58 @@ INPUT_SIZE = {
     "cnn": 224,
 }
 
-loaded_models = {}
-for key, path in MODEL_PATHS.items():
+def is_lfs_pointer(path):
     try:
-        loaded_models[key] = tf.keras.models.load_model(path)
-        print(f"[OK] Loaded {key} model")
-    except Exception as e:
-        print(f"[ERROR] Could not load {key}: {e}")
+        with open(path, "rb") as f:
+            return b"git-lfs.github.com" in f.read(200)
+    except:
+        return True
 
+def download_from_drive(file_id, output_path):
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    url = f"https://drive.google.com/uc?id={file_id}"
+    gdown.download(url, output_path, quiet=False)
+
+loaded_models = {}
+broken_models = set()
+def get_model(name):
+    if name in loaded_models:
+        return loaded_models[name]
+
+    if name in broken_models:
+        return None
+
+    info = MODEL_SOURCES.get(name)
+    if not info:
+        return None
+
+    path = info["path"]
+
+    if not os.path.exists(path) or is_lfs_pointer(path):
+        if not info["drive_id"]:
+            print(f"[SKIP] No source for {name}")
+            broken_models.add(name)
+            return None
+
+        print(f"[INFO] Downloading {name} from Google Drive...")
+        try:
+            download_from_drive(info["drive_id"], path)
+        except Exception as e:
+            print(f"[FAIL] Download failed for {name}: {e}")
+            broken_models.add(name)
+            return None
+
+    try:
+        model = tf.keras.models.load_model(path)
+        loaded_models[name] = model
+        print(f"[OK] Loaded {name}")
+        return model
+    except Exception as e:
+        print(f"[FAIL] Could not load {name}: {e}")
+        broken_models.add(name)
+        return None
+    
+    
 CLASS_NAMES = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 app = Flask(__name__)
@@ -51,15 +105,20 @@ def predict():
     file = request.files.get("frame")
     model_name = request.form.get("model", "efficientnet").lower()
 
-    if model_name not in loaded_models:
-        return jsonify({"prediction": "None", "confidence": 0})
+    if model_name not in MODEL_SOURCES:
+        return jsonify({"prediction": "Model not available", "confidence": 0})
 
-    model = loaded_models[model_name]
+    model = get_model(model_name)
+    if model is None:
+        return jsonify({
+        "prediction": "Model unavailable",
+        "confidence": 0,
+    })
     preprocess = PREPROCESS[model_name]
     size = INPUT_SIZE[model_name]
 
     if not file:
-        return jsonify({"prediction": "None", "confidence": 0})
+        return jsonify({"prediction": "No Hands", "confidence": 0})
 
     # Decode image
     arr = np.frombuffer(file.read(), np.uint8)
