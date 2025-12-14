@@ -45,9 +45,17 @@ def is_lfs_pointer(path):
         return True
 
 def download_from_drive(file_id, output_path):
+    gdown_cache = "/tmp/gdown"
+    os.makedirs(gdown_cache, exist_ok=True)
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
+
     url = f"https://drive.google.com/uc?id={file_id}"
-    gdown.download(url, output_path, quiet=False)
+    gdown.download(
+        url,
+        output_path,
+        quiet=False,
+        use_cookies=False
+    )
 
 loaded_models = {}
 broken_models = set()
@@ -87,8 +95,8 @@ def get_model(name):
         print(f"[FAIL] Could not load {name}: {e}")
         broken_models.add(name)
         return None
-    
-    
+        
+
 CLASS_NAMES = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 app = Flask(__name__)
@@ -145,5 +153,12 @@ def predict():
     })
 
 
+@app.before_first_request
+def warmup():
+    print("[INFO] Warming up models...")
+    for name in MODEL_SOURCES:
+        get_model(name)
+
+        
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
