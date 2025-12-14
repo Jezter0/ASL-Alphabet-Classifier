@@ -153,8 +153,7 @@ def predict():
     })
 
 
-@app.before_first_request
-def warmup():
+with app.app_context():
     print("[INFO] Warming up models...")
     for name in MODEL_SOURCES:
         get_model(name)
