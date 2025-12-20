@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, render_template
 import os
 import cv2
 import gdown
+import json
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.applications import efficientnet, resnet
@@ -18,15 +19,19 @@ MODEL_SOURCES = {
     #     "drive_id": "1UYrHIHUaR77ku7WphQRD9saPMirqpVhB"
     # },
     "efficientnet": {
-        "path": "/tmp/models/EfficientNet/model.h5",
+        "path": "static/models/EfficientNet/model.h5",
         "drive_id": "1u5N396JC-vw-aSpAVHn8EF212SO3aZWv"
     },
     "resnet": {
-        "path": "/tmp/models/ResNet/model.h5",
+        "path": "static/models/ResNet/model.h5",
         "drive_id": "1UYrHIHUaR77ku7WphQRD9saPMirqpVhB"
     },
     "cnn": {
         "path": "static/models/CNN/asl_model_cnn.keras",
+        "drive_id": None  # already local
+    },
+    "landmark": {
+        "path": "static/models/Landmark/asl_landmark_best_model.keras",
         "drive_id": None  # already local
     }
 }
@@ -93,7 +98,7 @@ def get_model(name):
             return None
 
     try:
-        model = tf.keras.models.load_model(path)
+        model = tf.keras.models.load_model(path, compile=False)
         loaded_models[name] = model
         print(f"[OK] Loaded {name}")
         return model
@@ -115,43 +120,58 @@ def index():
 
 @app.route("/predict", methods=["POST"])
 def predict():
-    # Get frame + model name
-    file = request.files.get("frame")
-    model_name = request.form.get("model", "efficientnet").lower()
+    model_name = request.form.get("model", "").lower()
 
     if model_name not in MODEL_SOURCES:
         return jsonify({"prediction": "Model not available", "confidence": 0})
 
     model = get_model(model_name)
     if model is None:
+        return jsonify({"prediction": "Model unavailable", "confidence": 0})
+
+    # ======================
+    # LANDMARK MODEL PATH
+    # ======================
+    if model_name == "landmark":
+        lm_json = request.form.get("landmarks")
+        if not lm_json:
+            return jsonify({"prediction": "No Hand", "confidence": 0})
+
+        landmarks = np.array(json.loads(lm_json), dtype=np.float32)
+
+        if landmarks.shape != (63,):
+            return jsonify({"prediction": "Invalid Input", "confidence": 0})
+
+        x = np.expand_dims(landmarks, axis=0)  # (1,63)
+        pred = model.predict(x, verbose=0)[0]
+        idx = np.argmax(pred)
+
         return jsonify({
-        "prediction": "Model unavailable",
-        "confidence": 0,
-    })
-    preprocess = PREPROCESS[model_name]
-    size = INPUT_SIZE[model_name]
+            "prediction": CLASS_NAMES[idx],
+            "confidence": float(pred[idx]),
+            "model_used": "landmark"
+        })
 
-    dummy = np.zeros((1, 224, 224, 3), dtype=np.float32)
-    model.predict(dummy, verbose=0)
-
+    # ======================
+    # IMAGE MODEL PATH
+    # ======================
+    file = request.files.get("frame")
     if not file:
-        return jsonify({"prediction": "No Hands", "confidence": 0})
+        return jsonify({"prediction": "No Image", "confidence": 0})
 
-    # Decode image
     arr = np.frombuffer(file.read(), np.uint8)
     img = cv2.imdecode(arr, cv2.IMREAD_COLOR)
     if img is None:
-        return jsonify({"prediction": "None", "confidence": 0})
-    
-    # Convert to RGB
+        return jsonify({"prediction": "Invalid Image", "confidence": 0})
+
+    preprocess = PREPROCESS[model_name]
+    size = INPUT_SIZE[model_name]
+
     img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img = cv2.resize(img, (size, size))
-
-    # Preprocess
     img = preprocess(img.astype("float32"))
     img = np.expand_dims(img, axis=0)
 
-    # Predict
     pred = model.predict(img, verbose=0)[0]
     idx = np.argmax(pred)
 
@@ -161,12 +181,6 @@ def predict():
         "model_used": model_name
     })
 
-
-# with app.app_context():
-#     print("[INFO] Warming up models...")
-#     for name in MODEL_SOURCES:
-#         get_model(name)
-
         
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    app.run(host="0.0.0.0", port=5000, use_reloader=False)
