@@ -11,11 +11,11 @@ from tensorflow.keras.applications import efficientnet, resnet
 # Load model
 MODEL_SOURCES = {
     "efficientnet": {
-        "path": "/temp/models/EfficientNet/model.h5",
+        "path": "/tmp/models/EfficientNet/model.h5",
         "drive_id": "1u5N396JC-vw-aSpAVHn8EF212SO3aZWv"
     },
     "resnet": {
-        "path": "/temp/models/ResNet34/model.h5",
+        "path": "/tmp/models/ResNet34/model.h5",
         "drive_id": "1UYrHIHUaR77ku7WphQRD9saPMirqpVhB"
     },
     "cnn": {
