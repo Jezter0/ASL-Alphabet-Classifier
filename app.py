@@ -10,20 +10,12 @@ from tensorflow.keras.applications import efficientnet, resnet
     
 # Load model
 MODEL_SOURCES = {
-    # "efficientnet": {
-    #     "path": "static/models/EfficientNet/model.h5",
-    #     "drive_id": "1u5N396JC-vw-aSpAVHn8EF212SO3aZWv"
-    # },
-    # "resnet": {
-    #     "path": "static/models/ResNet/model.h5",
-    #     "drive_id": "1UYrHIHUaR77ku7WphQRD9saPMirqpVhB"
-    # },
     "efficientnet": {
-        "path": "static/models/EfficientNet/model.h5",
+        "path": "temp/models/EfficientNet/model.h5",
         "drive_id": "1u5N396JC-vw-aSpAVHn8EF212SO3aZWv"
     },
     "resnet": {
-        "path": "static/models/ResNet/model.h5",
+        "path": "temp/models/ResNet/model.h5",
         "drive_id": "1UYrHIHUaR77ku7WphQRD9saPMirqpVhB"
     },
     "cnn": {
