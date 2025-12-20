@@ -11,20 +11,20 @@ from tensorflow.keras.applications import efficientnet, resnet
 # Load model
 MODEL_SOURCES = {
     "efficientnet": {
-        "path": "temp/models/EfficientNet/model.h5",
+        "path": "/temp/models/EfficientNet/model.h5",
         "drive_id": "1u5N396JC-vw-aSpAVHn8EF212SO3aZWv"
     },
     "resnet": {
-        "path": "temp/models/ResNet/model.h5",
+        "path": "/temp/models/ResNet/model.h5",
         "drive_id": "1UYrHIHUaR77ku7WphQRD9saPMirqpVhB"
     },
     "cnn": {
         "path": "static/models/CNN/asl_model_cnn.keras",
-        "drive_id": None  # already local
+        "drive_id": None  
     },
     "landmark": {
         "path": "static/models/Landmark/asl_landmark_best_model.keras",
-        "drive_id": None  # already local
+        "drive_id": None  
     }
 }
 
