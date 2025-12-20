@@ -15,7 +15,7 @@ MODEL_SOURCES = {
         "drive_id": "1u5N396JC-vw-aSpAVHn8EF212SO3aZWv"
     },
     "resnet": {
-        "path": "/temp/models/ResNet/model.h5",
+        "path": "/temp/models/ResNet34/model.h5",
         "drive_id": "1UYrHIHUaR77ku7WphQRD9saPMirqpVhB"
     },
     "cnn": {
